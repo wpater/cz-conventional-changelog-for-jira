@@ -16,7 +16,6 @@ var defaultOptions = {
 };
 
 var type = 'func';
-var scope = 'everything';
 var jira = 'DAZ-123';
 var subject = 'testing123';
 const shortBody = 'a';
@@ -50,26 +49,33 @@ var longIssuesSplit =
   longIssues.slice(defaultOptions.maxLineWidth * 2, longIssues.length).trim();
 
 describe('commit message', function() {
-  it('only header w/ out scope', function() {
+  it('only header w/ out jira issue', function() {
+    expect(
+      commitMessage({
+        type,
+        subject
+      })
+    ).to.equal(`${type}: ${subject}`);
+  });
+  it('only header w/ jira issue', function() {
     expect(
       commitMessage({
         type,
         jira,
         subject
       })
-    ).to.equal(`${type}: ${jira} ${subject}`);
+    ).to.equal(`${type}(${jira}): ${subject}`);
   });
-  it('only header w/ scope', function() {
+  it('header and body w/ out jira issue', function() {
     expect(
       commitMessage({
         type,
-        scope,
-        jira,
-        subject
+        subject,
+        body
       })
-    ).to.equal(`${type}(${scope}): ${jira} ${subject}`);
+    ).to.equal(`${type}: ${subject}\n\n${body}`);
   });
-  it('header and body w/ out scope', function() {
+  it('header and body w/ jira issue', function() {
     expect(
       commitMessage({
         type,
@@ -77,20 +83,19 @@ describe('commit message', function() {
         subject,
         body
       })
-    ).to.equal(`${type}: ${jira} ${subject}\n\n${body}`);
+    ).to.equal(`${type}(${jira}): ${subject}\n\n${body}`);
   });
-  it('header and body w/ scope', function() {
+  it('header, body and issues w/ out jira issue', function() {
     expect(
       commitMessage({
         type,
-        scope,
-        jira,
         subject,
-        body
+        body,
+        issues
       })
-    ).to.equal(`${type}(${scope}): ${jira} ${subject}\n\n${body}`);
+    ).to.equal(`${type}: ${subject}\n\n${body}\n\n${issues}`);
   });
-  it('header, body and issues w/ out scope', function() {
+  it('header, body and issues w/ jira issue', function() {
     expect(
       commitMessage({
         type,
@@ -99,21 +104,19 @@ describe('commit message', function() {
         body,
         issues
       })
-    ).to.equal(`${type}: ${jira} ${subject}\n\n${body}\n\n${issues}`);
+    ).to.equal(`${type}(${jira}): ${subject}\n\n${body}\n\n${issues}`);
   });
-  it('header, body and issues w/ scope', function() {
+  it('header, body and long issues w/ out jira issue', function() {
     expect(
       commitMessage({
         type,
-        scope,
-        jira,
         subject,
         body,
-        issues
+        issues: longIssues
       })
-    ).to.equal(`${type}(${scope}): ${jira} ${subject}\n\n${body}\n\n${issues}`);
+    ).to.equal(`${type}: ${subject}\n\n${body}\n\n${longIssuesSplit}`);
   });
-  it('header, body and long issues w/ out scope', function() {
+  it('header, body and long issues w/ jira issue', function() {
     expect(
       commitMessage({
         type,
@@ -122,23 +125,18 @@ describe('commit message', function() {
         body,
         issues: longIssues
       })
-    ).to.equal(`${type}: ${jira} ${subject}\n\n${body}\n\n${longIssuesSplit}`);
+    ).to.equal(`${type}(${jira}): ${subject}\n\n${body}\n\n${longIssuesSplit}`);
   });
-  it('header, body and long issues w/ scope', function() {
+  it('header and long body w/ out jira issue', function() {
     expect(
       commitMessage({
         type,
-        scope,
-        jira,
         subject,
-        body,
-        issues: longIssues
+        body: longBody
       })
-    ).to.equal(
-      `${type}(${scope}): ${jira} ${subject}\n\n${body}\n\n${longIssuesSplit}`
-    );
+    ).to.equal(`${type}: ${subject}\n\n${longBodySplit}`);
   });
-  it('header and long body w/ out scope', function() {
+  it('header and long body w/ jira issue', function() {
     expect(
       commitMessage({
         type,
@@ -146,20 +144,19 @@ describe('commit message', function() {
         subject,
         body: longBody
       })
-    ).to.equal(`${type}: ${jira} ${subject}\n\n${longBodySplit}`);
+    ).to.equal(`${type}(${jira}): ${subject}\n\n${longBodySplit}`);
   });
-  it('header and long body w/ scope', function() {
+  it('header, long body and issues w/ out jira issue', function() {
     expect(
       commitMessage({
         type,
-        scope,
-        jira,
         subject,
-        body: longBody
+        body: longBody,
+        issues
       })
-    ).to.equal(`${type}(${scope}): ${jira} ${subject}\n\n${longBodySplit}`);
+    ).to.equal(`${type}: ${subject}\n\n${longBodySplit}\n\n${issues}`);
   });
-  it('header, long body and issues w/ out scope', function() {
+  it('header, long body and issues w/ jira issue', function() {
     expect(
       commitMessage({
         type,
@@ -168,23 +165,19 @@ describe('commit message', function() {
         body: longBody,
         issues
       })
-    ).to.equal(`${type}: ${jira} ${subject}\n\n${longBodySplit}\n\n${issues}`);
+    ).to.equal(`${type}(${jira}): ${subject}\n\n${longBodySplit}\n\n${issues}`);
   });
-  it('header, long body and issues w/ scope', function() {
+  it('header, long body and long issues w/ out jira issue', function() {
     expect(
       commitMessage({
         type,
-        scope,
-        jira,
         subject,
         body: longBody,
-        issues
+        issues: longIssues
       })
-    ).to.equal(
-      `${type}(${scope}): ${jira} ${subject}\n\n${longBodySplit}\n\n${issues}`
-    );
+    ).to.equal(`${type}: ${subject}\n\n${longBodySplit}\n\n${longIssuesSplit}`);
   });
-  it('header, long body and long issues w/ out scope', function() {
+  it('header, long body and long issues w/ jira issue', function() {
     expect(
       commitMessage({
         type,
@@ -194,28 +187,13 @@ describe('commit message', function() {
         issues: longIssues
       })
     ).to.equal(
-      `${type}: ${jira} ${subject}\n\n${longBodySplit}\n\n${longIssuesSplit}`
+      `${type}(${jira}): ${subject}\n\n${longBodySplit}\n\n${longIssuesSplit}`
     );
   });
-  it('header, long body and long issues w/ scope', function() {
+  it('header, long body, breaking change, and long issues w/ jira issue', function() {
     expect(
       commitMessage({
         type,
-        scope,
-        jira,
-        subject,
-        body: longBody,
-        issues: longIssues
-      })
-    ).to.equal(
-      `${type}(${scope}): ${jira} ${subject}\n\n${longBodySplit}\n\n${longIssuesSplit}`
-    );
-  });
-  it('header, long body, breaking change, and long issues w/ scope', function() {
-    expect(
-      commitMessage({
-        type,
-        scope,
         jira,
         subject,
         body: longBody,
@@ -223,14 +201,13 @@ describe('commit message', function() {
         issues: longIssues
       })
     ).to.equal(
-      `${type}(${scope}): ${jira} ${subject}\n\n${longBodySplit}\n\n${breakingChange}${breaking}\n\n${longIssuesSplit}`
+      `${type}(${jira}): ${subject}\n\n${longBodySplit}\n\n${breakingChange}${breaking}\n\n${longIssuesSplit}`
     );
   });
-  it('header, long body, breaking change (with prefix entered), and long issues w/ scope', function() {
+  it('header, long body, breaking change (with prefix entered), and long issues w/ jira issue', function() {
     expect(
       commitMessage({
         type,
-        scope,
         jira,
         subject,
         body: longBody,
@@ -238,7 +215,7 @@ describe('commit message', function() {
         issues: longIssues
       })
     ).to.equal(
-      `${type}(${scope}): ${jira} ${subject}\n\n${longBodySplit}\n\n${breakingChange}${breaking}\n\n${longIssuesSplit}`
+      `${type}(${jira}): ${subject}\n\n${longBodySplit}\n\n${breakingChange}${breaking}\n\n${longIssuesSplit}`
     );
   });
 });
@@ -248,7 +225,6 @@ describe('validation', function() {
     expect(() =>
       commitMessage({
         type,
-        scope,
         jira,
         subject: shortBody
       })
@@ -258,7 +234,6 @@ describe('validation', function() {
     expect(() =>
       commitMessage({
         type,
-        scope,
         subject: ''
       })
     ).to.throw(`The subject must have at least 2 characters`);
@@ -277,11 +252,6 @@ describe('defaults', function() {
   it('defaultScope default', function() {
     expect(questionDefault('scope')).to.be.undefined;
   });
-  it('defaultScope options', () =>
-    expect(
-      questionDefault('scope', customOptions({ defaultScope: scope }))
-    ).to.equal(scope));
-
   it('defaultSubject default', () =>
     expect(questionDefault('subject')).to.be.undefined);
   it('defaultSubject options', function() {
@@ -315,11 +285,6 @@ describe('defaults', function() {
       )
     ).to.equal(issues);
   });
-});
-
-describe('filter', function() {
-  it('lowercase scope', () =>
-    expect(questionFilter('scope', 'HelloMatt')).to.equal('hellomatt'));
 });
 
 describe('when', function() {

@@ -89,31 +89,14 @@ module.exports = function(options) {
           }
         },
         {
-          type: 'input',
-          name: 'scope',
-          when: !options.skipScope,
-          message:
-            'What is the scope of this change (e.g. component or file name): (press enter to skip)',
-          default: options.defaultScope,
-          filter: function(value) {
-            return value.trim().toLowerCase();
-          }
-        },
-        {
           type: 'limitedInput',
           name: 'subject',
           message: 'Write a short, imperative tense description of the change:',
           default: options.defaultSubject,
           maxLength: maxHeaderWidth,
           leadingLabel: answers => {
-            const jira = answers.jira ? ` ${answers.jira}` : '';
-            let scope = '';
-
-            if (answers.scope && answers.scope !== 'none') {
-              scope = `(${answers.scope})`;
-            }
-
-            return `${answers.type}${scope}:${jira}`;
+            const jira = answers.jira ? `(${answers.jira})` : '';
+            return `${answers.type}${jira}:`;
           },
           validate: input =>
             input.length >= minHeaderWidth ||
@@ -197,12 +180,11 @@ module.exports = function(options) {
           width: options.maxLineWidth
         };
 
-        // parentheses are only needed when a scope is present
-        var scope = answers.scope ? '(' + answers.scope + ')' : '';
-        var jira = answers.jira ? answers.jira + ' ' : '';
+        // parentheses are only needed when a jira issue is present
+        const jira = answers.jira ? `(${answers.jira})` : '';
 
         // Hard limit this line in the validate
-        const head = answers.type + scope + ': ' + jira + answers.subject;
+        const head = answers.type + jira + ': ' + answers.subject;
 
         // Wrap these lines at options.maxLineWidth characters
         var body = answers.body ? wrap(answers.body, wrapOptions) : false;
