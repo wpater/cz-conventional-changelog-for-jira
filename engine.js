@@ -31,6 +31,21 @@ module.exports = function(options) {
   var getFromOptionsOrDefaults = function(key) {
     return options[key] || defaults[key];
   };
+  var getJiraIssueLocation = function(location, type, scope, jiraWithDecorators, subject) {
+    switch(location) {
+      case 'pre-type':
+        return jiraWithDecorators + type + scope + ': ' + subject;
+        break;
+      case 'pre-description':
+        return type + scope + ': ' + jiraWithDecorators + subject;
+        break;
+      case 'post-description':
+        return type + scope + ': ' + subject + ' ' + jiraWithDecorators;
+        break;
+      default:
+        return type + scope + ': ' + jiraWithDecorators + subject;
+    }
+  };
   var types = getFromOptionsOrDefaults('types');
 
   var length = longest(Object.keys(types)).length + 1;
@@ -211,10 +226,14 @@ module.exports = function(options) {
 
         // parentheses are only needed when a scope is present
         var scope = answers.scope ? '(' + answers.scope + ')' : '';
-        var jira = answers.jira ? answers.jira + ' ' : '';
+
+        // Get Jira issue prepend and append decorators
+        var prepend = options.jiraPrepend || ''
+        var append = options.jiraAppend || ''
+        var jiraWithDecorators = answers.jira ? prepend + answers.jira + append + ' ': '';
 
         // Hard limit this line in the validate
-        const head = answers.type + scope + ': ' + jira + answers.subject;
+        const head = getJiraIssueLocation(options.jiraLocation, answers.type, scope, jiraWithDecorators, answers.subject);
 
         // Wrap these lines at options.maxLineWidth characters
         var body = answers.body ? wrap(answers.body, wrapOptions) : false;

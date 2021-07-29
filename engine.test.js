@@ -251,6 +251,125 @@ describe('commit message', function() {
       )
     ).to.equal(`${type}(${scope}): ${subject}`);
   });
+  it('default jiraLocation when unknown', function() {
+    expect(
+      commitMessage(
+        {
+          type,
+          scope,
+          jira,
+          subject,
+          body
+        },
+        { jiraLocation: 'unknown-location' }
+      )
+    ).to.equal(`${type}(${scope}): ${jira} ${subject}\n\n${body}`);
+  });
+  it('pre-type jiraLocation', function() {
+    expect(
+      commitMessage(
+        {
+          type,
+          scope,
+          jira,
+          subject,
+          body
+        },
+        { jiraLocation: 'pre-type' }
+      )
+    ).to.equal(`${jira} ${type}(${scope}): ${subject}\n\n${body}`);
+  });
+  it('pre-description jiraLocation', function() {
+    expect(
+      commitMessage(
+        {
+          type,
+          scope,
+          jira,
+          subject,
+          body
+        },
+        { jiraLocation: 'pre-description' }
+      )
+    ).to.equal(`${type}(${scope}): ${jira} ${subject}\n\n${body}`);
+  });
+  it('post-description jiraLocation', function() {
+    expect(
+      commitMessage(
+        {
+          type,
+          scope,
+          jira,
+          subject,
+          body
+        },
+        { jiraLocation: 'post-description' }
+      )
+    ).to.equal(`${type}(${scope}): ${subject} ${jira} \n\n${body}`);
+  });
+  it('jiraPrepend decorator', function() {
+    expect(
+      commitMessage(
+        {
+          type,
+          scope,
+          jira,
+          subject,
+          body
+        },
+        { jiraPrepend: '-' }
+      )
+    ).to.equal(`${type}(${scope}): -${jira} ${subject}\n\n${body}`);
+  });
+  it('jiraAppend decorator', function() {
+    expect(
+      commitMessage(
+        {
+          type,
+          scope,
+          jira,
+          subject,
+          body
+        },
+        { jiraAppend: '+' }
+      )
+    ).to.equal(`${type}(${scope}): ${jira}+ ${subject}\n\n${body}`);
+  });
+  it('jiraPrepend and jiraAppend decorators', function() {
+    expect(
+      commitMessage(
+        {
+          type,
+          scope,
+          jira,
+          subject,
+          body
+        },
+        {
+          jiraAppend: ']',
+          jiraPrepend: '['
+        }
+      )
+    ).to.equal(`${type}(${scope}): [${jira}] ${subject}\n\n${body}`);
+  });
+  it('jiraLocation, jiraPrepend, jiraAppend decorators', function() {
+    expect(
+      commitMessage(
+        {
+          type,
+          scope,
+          jira,
+          subject,
+          body
+        },
+        {
+          jiraAppend: ']',
+          jiraPrepend: '[',
+          jiraLocation: 'pre-type'
+        }
+      )
+    ).to.equal(`[${jira}] ${type}(${scope}): ${subject}\n\n${body}`);
+  });
 });
 
 describe('validation', function() {

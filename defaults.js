@@ -8,5 +8,8 @@ module.exports = {
   minHeaderWidth: 2,
   maxLineWidth: 100,
   jiraPrefix: 'DAZ',
-  jiraOptional: false
+  jiraOptional: false,
+  jiraLocation: 'pre-description',
+  jiraPrepend: '',
+  jiraAppend: ''
 };
