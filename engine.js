@@ -68,6 +68,12 @@ module.exports = function(options) {
     options.scopes &&
     Array.isArray(options.scopes) &&
     options.scopes.length > 0;
+  const customScope = !options.skipScope && hasScopes && options.customScope;
+  const scopes = customScope ? [...options.scopes, 'custom' ]: options.scopes;
+
+  var getProvidedScope = function(answers) {
+    return answers.scope === 'custom' ? answers.customScope : answers.scope;
+  }
 
   return {
     // When a user runs `git cz`, prompter will
@@ -124,7 +130,7 @@ module.exports = function(options) {
           type: hasScopes ? 'list' : 'input',
           name: 'scope',
           when: !options.skipScope,
-          choices: hasScopes ? options.scopes : undefined,
+          choices: hasScopes ? scopes : undefined,
           message:
             'What is the scope of this change (e.g. component or file name): ' +
             (hasScopes ? '(select from the list)' : '(press enter to skip)'),
@@ -134,6 +140,12 @@ module.exports = function(options) {
           }
         },
         {
+          type: 'input',
+          name: 'customScope',
+          when: (({ scope }) => scope === 'custom'),
+          message: 'Type custom scope (press enter to skip)'
+        },
+        {
           type: 'limitedInput',
           name: 'subject',
           message: 'Write a short, imperative tense description of the change:',
@@ -141,10 +153,11 @@ module.exports = function(options) {
           maxLength: maxHeaderWidth - (options.exclamationMark ? 1 : 0),
           leadingLabel: answers => {
             const jira = answers.jira ? ` ${answers.jira}` : '';
-            let scope = '';
 
-            if (answers.scope && answers.scope !== 'none') {
-              scope = `(${answers.scope})`;
+            let scope = '';
+            const providedScope = getProvidedScope(answers);
+            if (providedScope && providedScope !== 'none') {
+              scope = `(${providedScope})`;
             }
 
             return `${answers.type}${scope}:${jira}`;
@@ -225,7 +238,9 @@ module.exports = function(options) {
         };
 
         // parentheses are only needed when a scope is present
-        var scope = answers.scope ? '(' + answers.scope + ')' : '';
+        const providedScope = getProvidedScope(answers);
+        var scope = providedScope ? '(' + providedScope + ')' : '';
+
         const addExclamationMark = options.exclamationMark && answers.breaking;
         scope = addExclamationMark ? scope + '!' : scope;
 

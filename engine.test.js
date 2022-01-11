@@ -14,6 +14,7 @@ var defaultOptions = defaults;
 
 var type = 'func';
 var scope = 'everything';
+var customScope = 'custom scope';
 var jira = 'DAZ-123';
 var subject = 'testing123';
 const shortBody = 'a';
@@ -86,6 +87,18 @@ describe('commit message', function() {
         body
       })
     ).to.equal(`${type}(${scope}): ${jira} ${subject}\n\n${body}`);
+  });
+  it('header and body w/ custom scope', function() {
+    expect(
+      commitMessage({
+        type,
+        scope: 'custom',
+        customScope,
+        jira,
+        subject,
+        body
+      })
+    ).to.equal(`${type}(${customScope}): ${jira} ${subject}\n\n${body}`);
   });
   it('header, body and issues w/ out scope', function() {
     expect(

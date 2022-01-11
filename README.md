@@ -53,6 +53,7 @@ Like commitizen, you can specify the configuration of cz-conventional-changelog-
 |                      | scopes         | undefined         | A list (JS Array) of scopes that will be available for selection. Note that adding this will change the scope field from Inquirer 'input' to 'list'.                  |
 | CZ_TYPE              | defaultType    | undefined         | The default type.                                                                                                                                                     |
 | CZ_SCOPE             | defaultScope   | undefined         | The default scope.                                                                                                                                                    |
+| CZ_CUSTOM_SCOPE      | customScope    | false             | Whether user can provide custom scope in addition to predefined ones
 | CZ_SUBJECT           | defaultSubject | undefined         | A default subject.                                                                                                                                                    |
 | CZ_BODY              | defaultBody    | undefined         | A default body.                                                                                                                                                       |
 | CZ_ISSUES            | defaultIssues  | undefined         | A default issue.                                                                                                                                                      |
@@ -82,7 +83,8 @@ module.exports = custom({
     }
   },
   skipScope: false,
-  scopes: ['myScope1', 'myScope2']
+  scopes: ['myScope1', 'myScope2'],
+  customScope: true
 });
 ```
 **./package.json**
@@ -117,6 +119,7 @@ List of all supported configurable options when using the _configurable_ approac
 | jiraPrefix     | 'DAZ'                    | The default JIRA ticket prefix that will be displayed.                                                                                                                |
 | types          | ./types.js               | A list (JS Object) of supported commit types.                                                                                                                         |
 | scopes         | undefined                | A list (JS Array) of scopes that will be available for selection. Note that adding this will change the scope field from Inquirer 'input' to 'list'.                  |
+| customScope    | false                    | If this is set to true, users are given an option to provide custom scope aside the ones predefined in 'scopes' array. In this case a new option named 'custom' appears in the list and once chosen a prompt appears to provide custom scope
 | jiraOptional   | false                    | If this is set to true, you can leave the JIRA field blank.                                                                                                           |
 | jiraLocation   | "pre-description"        | Changes position of JIRA ID. Options: `pre-type`, `pre-description`, `post-description`                                                                               |
 | jiraPrepend    | ""                       | Prepends JIRA ID with an optional decorator. e.g.: `[DAZ-1234`                                                                                                        |
