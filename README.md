@@ -43,26 +43,57 @@ and then add the following to package.json:
 
 Like commitizen, you can specify the configuration of cz-conventional-changelog-for-jira through the package.json's `config.commitizen` key, or with environment variables.
 
-| Environment variable | package.json   | Default           | Description                                                                                                                                                           |
-| -------------------- | -------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CZ_JIRA_MODE         | jiraMode       | true              | If this is set to true, CZ will ask for a Jira issue and put it in the commit head. If set to false CZ will ask for the issue in the end, and can be used for GitHub. |
-| CZ_MAX_HEADER_WIDTH  | maxHeaderWidth | 72                | This limits how long a commit message head can be.                                                                                                                    |
-| CZ_MIN_HEADER_WIDTH  | minHeaderWidth | 2                 | This limits how short a commit message can be.                                                                                                                        |
-| CZ_MAX_LINE_WIDTH    | maxLineWidth   | 100               | Commit message bodies are automatically wrapped. This decides how long the lines will be.                                                                             |
-| CZ_SKIP_SCOPE        | skipScope      | true              | If scope should be used in commit messages.                                                                                                                           |
-|                      | scopes         | undefined         | A list (JS Array) of scopes that will be available for selection. Note that adding this will change the scope field from Inquirer 'input' to 'list'.                  |
-| CZ_TYPE              | defaultType    | undefined         | The default type.                                                                                                                                                     |
-| CZ_SCOPE             | defaultScope   | undefined         | The default scope.                                                                                                                                                    |
-| CZ_CUSTOM_SCOPE      | customScope    | false             | Whether user can provide custom scope in addition to predefined ones
-| CZ_SUBJECT           | defaultSubject | undefined         | A default subject.                                                                                                                                                    |
-| CZ_BODY              | defaultBody    | undefined         | A default body.                                                                                                                                                       |
-| CZ_ISSUES            | defaultIssues  | undefined         | A default issue.                                                                                                                                                      |
-| CZ_JIRA_OPTIONAL     | jiraOptional   | false             | If this is set to true, you can leave the JIRA field blank.                                                                                                           |
-| CZ_JIRA_PREFIX       | jiraPrefix     | "DAZ"             | If this is set it will be will be displayed as the default JIRA ticket prefix                                                                                         |
-| CZ_JIRA_LOCATION     | jiraLocation   | "pre-description" | Changes position of JIRA ID. Options: `pre-type`, `pre-description`, `post-description`                                                                               |
-| CZ_JIRA_PREPEND      | jiraPrepend    | ""                | Prepends JIRA ID with an optional decorator. e.g.: `[DAZ-1234`                                                                                                        |
-| CZ_JIRA_APPEND       | jiraAppend     | ""                | Appends JIRA ID with an optional decorator. e.g.: `DAZ-1234]`                                                                                                         |
-| CZ_EXCLAMATION_MARK  | exclamationMark| false             | On breaking changes, adds an exclamation mark (!) after the scope, e.g.: `type(scope)!: break stuff`. When activated, reduces the effective allowed header length by 1.  |
+| Environment variable | package.json    | Default           | Description                                                                                                                                                             |
+|----------------------|-----------------|-------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| CZ_JIRA_MODE         | jiraMode        | true              | If this is set to true, CZ will ask for a Jira issue and put it in the commit head. If set to false CZ will ask for the issue in the end, and can be used for GitHub.   |
+| CZ_MAX_HEADER_WIDTH  | maxHeaderWidth  | 72                | This limits how long a commit message head can be.                                                                                                                      |
+| CZ_MIN_HEADER_WIDTH  | minHeaderWidth  | 2                 | This limits how short a commit message can be.                                                                                                                          |
+| CZ_MAX_LINE_WIDTH    | maxLineWidth    | 100               | Commit message bodies are automatically wrapped. This decides how long the lines will be.                                                                               |
+| CZ_SKIP_SCOPE        | skipScope       | true              | If scope should be used in commit messages.                                                                                                                             |
+|                      | scopes          | undefined         | A list (JS Array) of scopes that will be available for selection. Note that adding this will change the scope field from Inquirer 'input' to 'list'.                    |
+| CZ_TYPE              | defaultType     | undefined         | The default type.                                                                                                                                                       |
+| CZ_SCOPE             | defaultScope    | undefined         | The default scope.                                                                                                                                                      |
+| CZ_CUSTOM_SCOPE      | customScope     | false             | Whether user can provide custom scope in addition to predefined ones                                                                                                    |
+| CZ_SUBJECT           | defaultSubject  | undefined         | A default subject.                                                                                                                                                      |
+| CZ_BODY              | defaultBody     | undefined         | A default body.                                                                                                                                                         |
+| CZ_ISSUES            | defaultIssues   | undefined         | A default issue.                                                                                                                                                        |
+| CZ_JIRA_OPTIONAL     | jiraOptional    | false             | If this is set to true, you can leave the JIRA field blank.                                                                                                             |
+| CZ_JIRA_PREFIX       | jiraPrefix      | "DAZ"             | If this is set it will be will be displayed as the default JIRA ticket prefix                                                                                           |
+| CZ_JIRA_LOCATION     | jiraLocation    | "pre-description" | Changes position of JIRA ID. Options: `pre-type`, `pre-description`, `post-description`, `post-body`                                                                    |
+| CZ_JIRA_PREPEND      | jiraPrepend     | ""                | Prepends JIRA ID with an optional decorator. e.g.: `[DAZ-1234`                                                                                                          |
+| CZ_JIRA_APPEND       | jiraAppend      | ""                | Appends JIRA ID with an optional decorator. e.g.: `DAZ-1234]`                                                                                                           |
+| CZ_EXCLAMATION_MARK  | exclamationMark | false             | On breaking changes, adds an exclamation mark (!) after the scope, e.g.: `type(scope)!: break stuff`. When activated, reduces the effective allowed header length by 1. |
+
+### Jira Location Options
+
+pre-type:
+```text
+JIRA-1234 type(scope): commit subject
+```
+
+pre-description:
+```text
+type(scope): JIRA-1234 commit subject
+```
+
+post-description:
+```text
+type(scope): commit subject JIRA-1234
+```
+
+post-body:
+```text
+type(scope): commit subject
+
+JIRA-1234
+```
+```text
+type(scope): commit subject
+
+this is a commit body
+
+JIRA-1234
+```
 
 ## Dynamic Configuration
 
@@ -104,27 +135,28 @@ This example would:
 * Limit the scope selection to either `myScope` or `myScope2`
 
 List of all supported configurable options when using the _configurable_ approach:
-| Key            | Default                  | Description                                                                                                                                                           |
-| -------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| jiraMode       | true                     | If this is set to true, CZ will ask for a Jira issue and put it in the commit head. If set to false CZ will ask for the issue in the end, and can be used for GitHub. |
-| maxHeaderWidth | 72                       | This limits how long a commit message head can be.                                                                                                                    |
-| minHeaderWidth | 2                        | This limits how short a commit message can be.                                                                                                                        |
-| maxLineWidth   | 100                      | Commit message bodies are automatically wrapped. This decides how long the lines will be.                                                                             |
-| skipScope      | true                     | If scope should be used in commit messages.                                                                                                                           |
-| defaultType    | undefined                | The default type.                                                                                                                                                     |
-| defaultScope   | undefined                | The default scope.                                                                                                                                                    |
-| defaultSubject | undefined                | A default subject.                                                                                                                                                    |
-| defaultBody    | undefined                | A default body.                                                                                                                                                       |
-| defaultIssues  | undefined                | A default issue.                                                                                                                                                      |
-| jiraPrefix     | 'DAZ'                    | The default JIRA ticket prefix that will be displayed.                                                                                                                |
-| types          | ./types.js               | A list (JS Object) of supported commit types.                                                                                                                         |
-| scopes         | undefined                | A list (JS Array) of scopes that will be available for selection. Note that adding this will change the scope field from Inquirer 'input' to 'list'.                  |
-| customScope    | false                    | If this is set to true, users are given an option to provide custom scope aside the ones predefined in 'scopes' array. In this case a new option named 'custom' appears in the list and once chosen a prompt appears to provide custom scope
-| jiraOptional   | false                    | If this is set to true, you can leave the JIRA field blank.                                                                                                           |
-| jiraLocation   | "pre-description"        | Changes position of JIRA ID. Options: `pre-type`, `pre-description`, `post-description`                                                                               |
-| jiraPrepend    | ""                       | Prepends JIRA ID with an optional decorator. e.g.: `[DAZ-1234`                                                                                                        |
-| jiraAppend     | ""                       | Appends JIRA ID with an optional decorator. e.g.: `DAZ-1234]`                                                                                                         |
-| exclamationMark| false                    | On breaking changes, adds an exclamation mark (!) after the scope, e.g.: `type(scope)!: break stuff`. When activated, reduces the effective allowed header length by 1.  |
+
+| Key             | Default           | Description                                                                                                                                                                                                                                  |
+|-----------------|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| jiraMode        | true              | If this is set to true, CZ will ask for a Jira issue and put it in the commit head. If set to false CZ will ask for the issue in the end, and can be used for GitHub.                                                                        |
+| maxHeaderWidth  | 72                | This limits how long a commit message head can be.                                                                                                                                                                                           |
+| minHeaderWidth  | 2                 | This limits how short a commit message can be.                                                                                                                                                                                               |
+| maxLineWidth    | 100               | Commit message bodies are automatically wrapped. This decides how long the lines will be.                                                                                                                                                    |
+| skipScope       | true              | If scope should be used in commit messages.                                                                                                                                                                                                  |
+| defaultType     | undefined         | The default type.                                                                                                                                                                                                                            |
+| defaultScope    | undefined         | The default scope.                                                                                                                                                                                                                           |
+| defaultSubject  | undefined         | A default subject.                                                                                                                                                                                                                           |
+| defaultBody     | undefined         | A default body.                                                                                                                                                                                                                              |
+| defaultIssues   | undefined         | A default issue.                                                                                                                                                                                                                             |
+| jiraPrefix      | 'DAZ'             | The default JIRA ticket prefix that will be displayed.                                                                                                                                                                                       |
+| types           | ./types.js        | A list (JS Object) of supported commit types.                                                                                                                                                                                                |
+| scopes          | undefined         | A list (JS Array) of scopes that will be available for selection. Note that adding this will change the scope field from Inquirer 'input' to 'list'.                                                                                         |
+| customScope     | false             | If this is set to true, users are given an option to provide custom scope aside the ones predefined in 'scopes' array. In this case a new option named 'custom' appears in the list and once chosen a prompt appears to provide custom scope |
+| jiraOptional    | false             | If this is set to true, you can leave the JIRA field blank.                                                                                                                                                                                  |
+| jiraLocation    | "pre-description" | Changes position of JIRA ID. Options: `pre-type`, `pre-description`, `post-description`, `post-body`                                                                                                                                         |
+| jiraPrepend     | ""                | Prepends JIRA ID with an optional decorator. e.g.: `[DAZ-1234`                                                                                                                                                                               |
+| jiraAppend      | ""                | Appends JIRA ID with an optional decorator. e.g.: `DAZ-1234]`                                                                                                                                                                                |
+| exclamationMark | false             | On breaking changes, adds an exclamation mark (!) after the scope, e.g.: `type(scope)!: break stuff`. When activated, reduces the effective allowed header length by 1.                                                                      |
 
 
 ### Commitlint

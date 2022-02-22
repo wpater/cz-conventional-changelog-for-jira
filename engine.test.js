@@ -351,6 +351,50 @@ describe('commit message', function() {
       )
     ).to.equal(`${type}(${scope}): ${subject} ${jira} \n\n${body}`);
   });
+  it('post-body jiraLocation with body', function() {
+    expect(
+      commitMessage(
+        {
+          type,
+          scope,
+          jira,
+          subject,
+          body
+        },
+        { ...defaultOptions, jiraLocation: 'post-body' }
+      )
+    ).to.equal(`${type}(${scope}): ${subject}\n\n${body}\n\n${jira}`);
+  });
+  it('post-body jiraLocation no body', function() {
+    expect(
+      commitMessage(
+        {
+          type,
+          scope,
+          jira,
+          subject,
+          body: false
+        },
+        { ...defaultOptions, jiraLocation: 'post-body' }
+      )
+    ).to.equal(`${type}(${scope}): ${subject}\n\n${jira}`);
+  });
+  it('post-body jiraLocation with body and footer', function() {
+    var footer = `${breakingChange}${breaking}`;
+    expect(
+      commitMessage(
+        {
+          type,
+          scope,
+          jira,
+          subject,
+          body,
+          breaking,
+        },
+        { ...defaultOptions, jiraLocation: 'post-body' }
+      )
+    ).to.equal(`${type}(${scope}): ${subject}\n\n${body}\n\n${jira}\n\n${breakingChange}${breaking}`);
+  });
   it('jiraPrepend decorator', function() {
     expect(
       commitMessage(

@@ -42,6 +42,9 @@ module.exports = function(options) {
       case 'post-description':
         return type + scope + ': ' + subject + ' ' + jiraWithDecorators;
         break;
+      case 'post-body':
+        return type + scope + ': ' + subject;
+        break;
       default:
         return type + scope + ': ' + jiraWithDecorators + subject;
     }
@@ -152,7 +155,7 @@ module.exports = function(options) {
           default: options.defaultSubject,
           maxLength: maxHeaderWidth - (options.exclamationMark ? 1 : 0),
           leadingLabel: answers => {
-            const jira = answers.jira ? ` ${answers.jira}` : '';
+            const jira = answers.jira && options.jiraLocation !== 'footer' ? ` ${answers.jira}` : '';
 
             let scope = '';
             const providedScope = getProvidedScope(answers);
@@ -254,6 +257,14 @@ module.exports = function(options) {
 
         // Wrap these lines at options.maxLineWidth characters
         var body = answers.body ? wrap(answers.body, wrapOptions) : false;
+        if (options.jiraMode && options.jiraLocation === 'post-body') {
+          if (body === false) {
+            body = '';
+          } else {
+            body += "\n\n";
+          }
+          body += jiraWithDecorators.trim();
+        }
 
         // Apply breaking change prefix, removing it if already present
         var breaking = answers.breaking ? answers.breaking.trim() : '';
